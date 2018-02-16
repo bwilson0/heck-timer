@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+	<link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="container" id="currentTime">
+      </div>
+      <div class="container" id="quests">
+      </div>
+    </div>
+    <script>
+      const luxon = require('luxon');
+      const {DateTime, Interval} = luxon;
+
+      setInterval(update, 1000)
+
+      function update(){
+        var one = DateTime.fromISO('2018-02-13T06:05:00Z');
+        var currentTime = DateTime.local();
+        var int = Interval.fromDateTimes(one,currentTime).length('hours',true);
+        var i = Math.ceil(int - (11 * (Math.floor(int / 11))));
+
+        var t2 = (Math.ceil(int) - int) * 60;
+        var s = Math.round((t2 - Math.floor(t2)) * 60)
+        t2 = Math.round(t2);
+
+        var quests = document.getElementById('quests')
+        var length = quests.childNodes.length;
+        for (l = 0; l < length; l++) {
+          quests.removeChild(quests.firstChild)
+        }
+        var domCurrentTime = document.getElementById('currentTime')
+        domCurrentTime.removeChild(domCurrentTime.firstChild)
+
+        for (j = 0; j < 11; j++) {
+          var k = i + j;
+          if (k > 11) {
+            k = k - 11;
+          }
+          var q = findQ(k)
+          if (j == 0) {
+            var t = 0;
+          } else {
+            var t = t2 + (60 * (j - 1))
+          }
+
+          quests.appendChild(createCard(q, t, s))
+        }
+
+
+        var cte = document.createElement('p')
+        var attr = document.createAttribute('align')
+        attr.value = 'center'
+        cte.setAttributeNode(attr)
+        var ctt = document.createTextNode(currentTime.toLocaleString(DateTime.DATETIME_FULL))
+        cte.appendChild(ctt)
+
+
+        document.getElementById('currentTime').appendChild(cte)
+
+
+        function createCard(q, m, s) {
+          var pe = document.createElement('p')
+          pe.className = 'card-text'
+          if (m == 0) {
+            var pt = document.createTextNode('current quest')
+          } else {
+            if (t > 60){
+              var hFull = m / 60
+              var h = Math.floor(hFull)
+              m = Math.round((hFull - h) * 60)
+              var pt = document.createTextNode('starts in ' + h + ' hours ' + m + ' minutes ' + s + ' seconds')
+            } else {
+              var pt = document.createTextNode('starts in ' + m + ' minutes ' + s + ' seconds')
+            }
+          }
+          pe.appendChild(pt)
+          var he = document.createElement('h5')
+          he.className = 'card-title'
+          var ht = document.createTextNode(q)
+          he.appendChild(ht)
+          var div1 = document.createElement('div')
+          div1.className = 'card-body'
+          div1.appendChild(he)
+          div1.appendChild(pe)
+          var div2 = document.createElement('div')
+
+          switch (q) {
+            case 'Troop':
+              div2.className = 'card text-white bg-warning mx-auto my-2'
+            break;
+            case 'Monster':
+              div2.className = 'card text-white bg-danger mx-auto my-2'
+            break;
+            case 'Gather':
+              div2.className = 'card text-white bg-success mx-auto my-2'
+            break;
+            case 'Research':
+              div2.className = 'card text-white bg-primary mx-auto my-2'
+            break;
+            case 'Might':
+              div2.className = 'card text-white bg-info mx-auto my-2'
+            break;
+            case 'Construction':
+              div2.className = 'card text-white bg-secondary mx-auto my-2'
+            break;
+            default:
+              div2.className = 'card mx-auto  my-2'
+          }
+
+          div2.style = 'width: 18rem;'
+          div2.appendChild(div1)
+          return div2
+        }
+
+
+        function findQ(i) {
+          var q;
+          switch (i) {
+            case 1:
+              q = 'Troop'
+              break;
+            case 2:
+              q = 'Monster'
+              break;
+            case 3:
+              q = 'Gather'
+              break;
+            case 4:
+              q = 'Research'
+              break;
+            case 5:
+              q = 'Troop'
+              break;
+            case 6:
+              q = 'Monster'
+              break;
+            case 7:
+              q = 'Might'
+              break;
+            case 8:
+              q = 'Gather'
+              break;
+            case 9:
+              q = 'Troop'
+              break;
+            case 10:
+              q = 'Monster'
+              break;
+            case 11:
+              q = 'Construction'
+              break;
+            default:
+              q = 'ERROR'
+          }
+          return q
+        }
+      }
+
+    </script>
+  </body>
+</html>
